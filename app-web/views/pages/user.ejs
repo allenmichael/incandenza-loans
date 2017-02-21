@@ -13,17 +13,54 @@
 </div>
 
 <div class="container">
+    <div class="row">
+      <%- include ../partials/box/folder-path %>
+      <hr>
+    </div>
     <div class="section">
       <div class="row">
-        <div class="col s12 m4">
-          <div class="icon-block">
-            <h2 class="center brown-text"><i class="material-icons">flash_on</i></h2>
-            <h5 class="center">Speeds up development</h5>
-
-            <p class="light">We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.</p>
-          </div>
-        </div>
+        <%- include ../partials/box/folders %>
+        <%- include ../partials/box/files %>
+      </div>
     </div>
 </div>
+<script type="text/javascript">
+    var accessToken = "<%= user.accessToken %>"; 
+
+    var form = document.getElementById('file-form');
+    var fileSelect = document.getElementById('file-select');
+    var uploadButton = document.getElementById('upload-button');
+
+    uploadButton.onclick = function(event){
+        event.preventDefault();
+        var files = fileSelect.files;
+        var formData = new FormData();
+
+        // The Box Auth Header. Add your access token.
+        var headers = { Authorization: 'Bearer ' + accessToken};
+        var uploadUrl = 'https://upload.box.com/api/2.0/files/content';
+
+        formData.append('files', files[0], files[0].name);
+
+        // Add the destination folder for the upload to the form
+        formData.append('parent_id', '<%= currentFolder %>');
+
+        $.ajax({
+            url: uploadUrl,
+            headers: headers,
+            type: 'POST',
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+            contentType: false,
+            data: formData
+        }).complete(function ( data ) {
+            // Log the JSON response to prove this worked
+            console.log(data.responseText);
+            location.reload(true);
+        });
+    }
+
+    
+  </script>
 
 <% include ../partials/common/footer %>

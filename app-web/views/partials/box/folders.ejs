@@ -1,0 +1,37 @@
+<div id="folders" class="col m4">
+  <div class="container">
+    <div class="section">
+      <div class="row">
+        <div class="col m12">
+          <h4>Folders</h4>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="row">
+        <form method="post" action="/user/<%= currentFolder %>/folder"> 
+          <div class="form-group">
+          <input type="text" name="folderName" placeholder="Folder name..." />                    
+          <button type='submit' class="btn btn-default">Add Folder</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="section">
+      <div class="row">
+        <% if(folders.length === 0) { %>
+          <p id="noFolders" class="red-text text-darken-4 text-center">No subfolders found.</p>
+        <% } %>
+        <ul id="folderGroup" class="collection">
+        <% folders.forEach(function(folder) { %>
+          <a href="/user/<%= folder.id %>" class="collection-item">
+              <i class="small material-icons">perm_media</i>
+              <span><%= folder.name %></span>
+          </a>
+        <% }); %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

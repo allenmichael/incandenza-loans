@@ -28,6 +28,11 @@ class TemplateServices {
 		return client.folders.addMetadataAsync(folderId, metadata.scope, metadata.template, metadata.values);
 	}
 
+	static createFolderWebhook(client, webhook, folderId) {
+		webhook = TemplateServices.validateFolderWebhook(webhook);
+		return client.webhooks.createAsync(folderId, webhook.type, webhook.address, webhook.triggers);
+	}
+
 	static validateCollaboration(collab) {
 		if (!collab.id) {
 			throw new Error("An id field is required on Access objects.");
@@ -68,6 +73,17 @@ class TemplateServices {
 			group.role = "member";
 		}
 		return group;
+	}
+
+	static validateFolderWebhook(webhook) {
+		if (!webhook.address) {
+			throw new Error("A notification url is required to add a webhook.");
+		}
+		if (!webhook.triggers && !_.isArray(webhook.triggers)) {
+			throw new Error("A triggers array is required to add a webhook.");
+		}
+		webhook.type = "folder";
+		return webhook;
 	}
 
 	static cleanUpOnError(foldersToDeleteOnError, client) {

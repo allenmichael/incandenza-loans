@@ -5,24 +5,28 @@ const Promise = require('bluebird');
 const asyncFunc = Promise.coroutine;
 
 class TemplateProcessor {
-	constructor(client, template, personas, users) {
+	constructor(client, template, personas, users, includeAccessControl = true, includeMetadata = true, includeFolderWebhooks = true) {
 		this.client = client;
 		this.folderStructure = template.template;
 		this.checklist = template.folderChecklist;
 		this.users = users;
 		this.user = template.user;
 		this.personas = personas;
-		this.parentFolderId = template.user.parentFolderId || TemplateServices.getDefaultRootFolder();
+		this.parentFolderId = template.parentFolderId;
 		this.childFolders = [];
 		this.foldersToDeleteOnError = [];
 		this.folders = [];
 		this.collaborations = [];
 		this.metadata = [];
 		this.groups = [];
+		this.webhooks = [];
 		this.finishedProcess = {};
+		this.includeAccessControl = includeAccessControl;
+		this.includeMetadata = includeMetadata;
+		this.includeFolderWebhooks = includeFolderWebhooks;
 	}
 
-	process() {
+	processTemplate() {
 		let self = this;
 		return asyncFunc(function* () {
 			yield self.processFolders();
@@ -31,7 +35,8 @@ class TemplateProcessor {
 				folders: self.folders,
 				metadata: yield Promise.all(self.metadata),
 				collaborations: yield Promise.all(self.collaborations),
-				groups: yield Promise.all(self.groups)
+				groups: yield Promise.all(self.groups),
+				webhooks: yield Promise.all(self.webhooks)
 			};
 		})()
 			.catch(asyncFunc(function* (err) {
@@ -57,8 +62,15 @@ class TemplateProcessor {
 	processCreatedFolder(folderStructure, createdFolder) {
 		_.pull(this.checklist, folderStructure.uuid);
 		this.folders.push(createdFolder);
-		this.processAccessControl(folderStructure, createdFolder.id);
-		this.processMetadata(folderStructure, createdFolder.id);
+		if (this.includeAccessControl) {
+			this.processAccessControl(folderStructure, createdFolder.id);
+		}
+		if (this.includeMetadata) {
+			this.processMetadata(folderStructure, createdFolder.id);
+		}
+		if (this.includeFolderWebhooks) {
+			this.processFolderWebhooks(folderStructure, createdFolder.id);
+		}
 	}
 
 	processChildFolders(parentId, children) {
@@ -77,13 +89,15 @@ class TemplateProcessor {
 	buildNextFolders(folderStructure, createdFolderId) {
 		let self = this;
 		return asyncFunc(function* () {
-			if (folderStructure.children.length > 0) {
+			if (folderStructure.children && folderStructure.children.length > 0) {
 				yield self.processChildFolders(createdFolderId, folderStructure.children);
 			}
 			if (self.checklist.length > 0) {
 				let buildNextFoldersPromise = [];
-				for (let i = 0; i < folderStructure.children.length; i++) {
-					buildNextFoldersPromise.push(self.buildNextFolders(folderStructure.children[i], folderStructure.children[i].id));
+				if (folderStructure.children && folderStructure.children.length > 0) {
+					for (let i = 0; i < folderStructure.children.length; i++) {
+						buildNextFoldersPromise.push(self.buildNextFolders(folderStructure.children[i], folderStructure.children[i].id));
+					}
 				}
 				yield Promise.all(buildNextFoldersPromise);
 			}
@@ -135,6 +149,14 @@ class TemplateProcessor {
 		if (currentFolder && currentFolder.metadata && currentFolder.metadata.length > 0) {
 			for (let i = 0; i < currentFolder.metadata.length; i++) {
 				this.metadata.push(TemplateServices.createMetadata(this.client, currentFolder.metadata[i], folderId));
+			}
+		}
+	}
+
+	processFolderWebhooks(currentFolder, folderId) {
+		if (currentFolder && currentFolder.webhooks && currentFolder.webhooks.length > 0) {
+			for (let i = 0; i < currentFolder.webhooks.length; i++) {
+				this.webhooks.push(TemplateServices.createFolderWebhook(this.client, currentFolder.webhooks[i], folderId));
 			}
 		}
 	}

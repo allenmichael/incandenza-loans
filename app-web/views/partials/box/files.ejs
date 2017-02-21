@@ -1,0 +1,38 @@
+<div id="files" class="col m8">
+  <div class="container">
+    <div class="section">
+      <div class="row">
+        <div class="col m4">
+          <h4>Files</h4>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="row">
+        <form id="file-form" class="col s12"> 
+          <input id='file-select' type="file">
+          <div id='upload-button' type="submit" class="btn-floating btn-large waves-effect waves-light">
+            <i class="material-icons">add</i>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="section">
+      <div class="row">
+        <% if(files.length === 0) { %>
+          <p id="noFiles" class="red-text text-darken-4 text-center">No files found.</p>
+        <% } %>
+        <ul class="collection">
+        <% files.forEach(function(file) { %>
+          <a href="/files/<%= file.id %>" class="collection-item">
+            <span class="file">
+              <i class="small material-icons">description</i>
+              <span class="file-name"><%= file.name %></span>
+            </span>
+          </a>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>

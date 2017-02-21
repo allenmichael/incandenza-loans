@@ -3,16 +3,15 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports.BoxConfig = {
-  clientId: "",
-  clientSecret: "",
-  enterpriseId: "",
-  jwtPrivateKeyFileName: "private_key.pem",
-  jwtPrivateKeyPassword: "password",
-  jwtPrivateKey: () => {
-    let certPath = path.resolve(this.BoxConfig.jwtPrivateKeyFileName)
-    return fs.readFileSync(certPath);
+  boxClientId: "",
+  boxClientSecret: "",
+  boxEnterpriseId: "",
+  boxPrivateKeyFileName: "private_key.pem",
+  boxPrivateKeyPassword: "password",
+  boxPrivateKey: () => {
+    return fs.readFileSync(path.resolve(this.BoxConfig.boxPrivateKeyFileName));
   },
-  jwtPublicKeyId: "",
+  boxPublicKeyId: "",
   enterprise: "enterprise",
   user: "user",
   expiresAt: "expiresAt",
@@ -52,6 +51,10 @@ module.exports.Auth0Config = {
   clientId: "",
   clientSecret: "",
   callbackUrl: "http://localhost:3000/callback",
-  sessionSecret: "",
-  apiToken: ""
+  sessionSecret: "securepassword",
+  inMemoryStoreSize: "100"
+}
+
+module.exports.AppConfig = {
+  domain: "http://localhost:3000"
 }
