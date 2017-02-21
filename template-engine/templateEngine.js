@@ -3,25 +3,25 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const asyncFunc = Promise.coroutine;
 const Template = require('./template');
+const UserTemplate = require('./userTemplate');
 const TemplateServices = require('./templateServices');
 const TemplateProcessor = require('./templateProcessor');
 
 class TemplateEngine {
-	constructor(baseTemplate, users, client) {
+	constructor(baseTemplate, client, personas = null) {
 		this.baseTemplate = baseTemplate;
 		this.client = client;
-		this.users = users;
-		this.foldersToDeleteOnError = [];
-		this.templates = this.createTemplates(users);
-		this.personas = this.createPersonasList(users);
-		this.userRootFolders = this.getUsersRootFolders(users);
+		this.users;
+		this.userTemplates;
+		this.personas = personas;
+		this.userRootFolders;
 	}
 
-	createTemplates(users) {
+	createUserTemplates(users) {
 		let templates = [];
 		_.each(users, (user) => {
 			if (!user.skipTemplate && user.templateKeys) {
-				templates.push(new Template(this.baseTemplate, user.templateKeys, user));
+				templates.push(new UserTemplate(this.baseTemplate, user.templateKeys, user));
 			}
 		});
 		return templates;
@@ -47,20 +47,32 @@ class TemplateEngine {
 		return _.uniq(rootFolders);
 	}
 
-	process() {
+	processUserTemplate(template) {
+		let processor = new TemplateProcessor(this.client, template, this.personas, this.users);
+		return processor.processTemplate();
+	}
+
+	processUsersWithTemplate(users) {
+		this.users = users;
+		this.userTemplates = this.createUserTemplates(users);
+		this.personas = this.createPersonasList(users);
+		this.userRootFolders = this.getUsersRootFolders(users)
 		let self = this;
 		return asyncFunc(function* () {
 			let processing = [];
-			for (let i = 0; i < self.templates.length; i++) {
-				processing.push(yield self.processTemplate(self.templates[i]));
+			for (let i = 0; i < self.userTemplates.length; i++) {
+				processing.push(yield self.processUserTemplate(self.userTemplates[i]));
 			}
 			return yield Promise.all(processing)
 		})();
 	}
 
-	processTemplate(template) {
-		let processor = new TemplateProcessor(this.client, template, this.personas, this.users);
-		return processor.process();
+	processFoldersWithTemplate(templateKeys, parentFolderId, includeMetadata = false, includeWebhooks = false) {
+		console.log(this.baseTemplate);
+		let template = new Template(this.baseTemplate, templateKeys, parentFolderId);
+		console.log(template);
+		let processor = new TemplateProcessor(this.client, template, null, null, false, false);
+		return processor.processTemplate();
 	}
 }
 module.exports = TemplateEngine;

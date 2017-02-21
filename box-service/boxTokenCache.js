@@ -5,8 +5,8 @@ const BoxConfig = require('../config').BoxConfig;
 const Promise = require('bluebird');
 const asyncFunc = Promise.coroutine;
 
-const CACHE_KEY_PREFIX_ENTERPRISE_TOKEN = `${BoxConfig.enterpriseId}|${BoxConfig.enterprise}`;
-const CACHE_KEY_PREFIX_USER_TOKEN = `${BoxConfig.enterpriseId}|${BoxConfig.user}`;
+const CACHE_KEY_PREFIX_ENTERPRISE_TOKEN = `${BoxConfig.boxEnterpriseId}|${BoxConfig.enterprise}`;
+const CACHE_KEY_PREFIX_USER_TOKEN = `${BoxConfig.boxEnterpriseId}|${BoxConfig.user}`;
 
 //Implementation of a BoxCache: has getBoxToken and setBoxToken
 class BoxTokenCache {
@@ -25,11 +25,7 @@ class BoxTokenCache {
 				return token;
 			} else {
 				let boxToken = yield self.cache.retrieveKey(key);
-				try {
-					boxToken = (boxToken) ? JSON.parse(boxToken) : null;
-				} catch (e) {
-					console.log(e);
-				}
+				boxToken = (boxToken) ? JSON.parse(boxToken) : null;
 				clearInMemoryStore(self.inMemoryStore);
 				self.inMemoryStore.set(key, boxToken);
 				return boxToken;
@@ -44,11 +40,7 @@ class BoxTokenCache {
 			self.inMemoryStore.set(key, boxToken);
 			expiration = expiration || 3600;
 			boxToken = JSON.stringify(boxToken);
-			try {
-				yield self.cache.setKeyWithExpiration(key, boxToken, expiration);
-			} catch (e) {
-				console.log(e);
-			}
+			yield self.cache.setKeyWithExpiration(key, boxToken, expiration);
 			return true;
 		})();
 	}

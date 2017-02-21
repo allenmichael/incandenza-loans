@@ -103,6 +103,12 @@
                         "type": "user"
                     }
                 ],
+                "webhooks": [
+                    {
+                        "address": "https://www.google.com",
+                        "triggers": ["FILE.UPLOADED", "FILE.DELETED"]
+                    }
+                ],
                 "children": [
                     {
                         "name": "Price Quotes",

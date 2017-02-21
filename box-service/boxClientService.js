@@ -10,12 +10,12 @@ const asyncFunc = Promise.coroutine;
 class BoxClientService {
 	constructor() {
 		this.BoxSdk = new Box({
-			clientID: BoxConfig.clientId,
-			clientSecret: BoxConfig.clientSecret,
+			clientID: BoxConfig.boxClientId,
+			clientSecret: BoxConfig.boxClientSecret,
 			appAuth: {
-				keyID: BoxConfig.jwtPublicKeyId,
-				privateKey: BoxConfig.jwtPrivateKey(),
-				passphrase: BoxConfig.jwtPrivateKeyPassword
+				keyID: BoxConfig.boxPublicKeyId,
+				privateKey: BoxConfig.boxPrivateKey(),
+				passphrase: BoxConfig.boxPrivateKeyPassword
 			}
 		});
 		this.BoxCache = BoxCache;
@@ -30,7 +30,7 @@ class BoxClientService {
 	}
 
 	getLongRunningServiceAccountClient() {
-		return BoxUtilityServices.promisifyClient(this.BoxSdk.getAppAuthClient(BoxConfig.enterprise, BoxConfig.enterpriseId));
+		return BoxUtilityServices.promisifyClient(this.BoxSdk.getAppAuthClient(BoxConfig.enterprise, BoxConfig.boxEnterpriseId));
 	}
 
 	getLongRunningUserClient(boxId) {
@@ -62,7 +62,7 @@ class BoxClientService {
 				return enterpriseToken;
 			} else {
 				return new Promise((resolve, reject) => {
-					self.BoxSdk.getEnterpriseAppAuthTokens(BoxConfig.enterpriseId, asyncFunc(function* (err, enterpriseToken) {
+					self.BoxSdk.getEnterpriseAppAuthTokens(BoxConfig.boxEnterpriseId, asyncFunc(function* (err, enterpriseToken) {
 						if (err) { reject(err); }
 						enterpriseToken = createExpiresAtProp(enterpriseToken);
 						let expiryTimeInSeconds = getExpirationTimeForCache(enterpriseToken);
