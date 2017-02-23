@@ -8,20 +8,14 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const SessionCache = require('connect-redis')(session);
 const CacheService = require('./cache-service/cacheService');
+const config = require('config');
 
 const passport = require('passport');
 const strategy = require('./identity-service/passport-strategies/auth0-strategy');
 
-let Auth0Config = require('./config').Auth0Config;
-let BoxConfig = require('./config').BoxConfig;
+const Auth0Config = config.get('Auth0Config');
 
 let webapp = require('./app-web/routes/index');
-let appapi = require('./app-api/routes/index');
-// let users = require('./routes/users');
-// let userToken = require('./routes/userToken');
-// let fileRoute = require('./routes/file');
-// let longRunningProcess = require('./routes/longRunningProcess');
-// let tooManyRequests = require('./routes/tooManyRequests');
 
 let app = express();
 
@@ -47,12 +41,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', webapp);
-app.use('/api', appapi);
-// app.use('/user', users);
-// app.use('/token', userToken);
-// app.use('/files', fileRoute);
-// app.use('/longrunningprocess', longRunningProcess);
-// app.use('/toomanyrequests', tooManyRequests);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
