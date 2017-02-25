@@ -10,12 +10,7 @@
     <div class="divider"></div>
     <div class="section">
       <div class="row">
-        <form method="post" action="/user/<%= currentFolder %>/folder"> 
-          <div class="form-group">
-          <input type="text" name="folderName" placeholder="Folder name..." />                    
-          <button type='submit' class="btn btn-default">Add Folder</button>
-          </div>
-        </form>
+        <%- include ./add-folder %>
       </div>
     </div>
     <div class="section">

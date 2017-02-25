@@ -18,6 +18,11 @@ module.exports.main = (req, res, next) => {
 }
 
 module.exports.callback = asyncFunc(function* (req, res, next) {
+	console.log(req.user);
+	if (IdentityProviderUtilities.checkForRoleOnUser(IdentityProviderUtilities.authorizedRoles.titleAgent, req.user)) {
+		res.redirect('/title-agent');
+		return;
+	}
 	let boxAppUserId = IdentityProviderUtilities.checkForExistingBoxAppUserId(req.user);
 	if (!boxAppUserId) {
 		let appUser = yield Box.createAppUser(req.user.displayName);
@@ -26,4 +31,12 @@ module.exports.callback = asyncFunc(function* (req, res, next) {
 		boxAppUserId = appUser.id;
 	}
 	res.redirect('/user');
-})
+});
+
+module.exports.ensureTitleAgent = (req, res, next) => {
+	if (IdentityProviderUtilities.checkForRoleOnUser(IdentityProviderUtilities.authorizedRoles.titleAgent, req.user)) {
+		next();
+	} else {
+		res.redirect('/');
+	}
+}
