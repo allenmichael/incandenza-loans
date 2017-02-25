@@ -11,10 +11,6 @@ class TemplateEngine {
 	constructor(baseTemplate, client, personas = null) {
 		this.baseTemplate = baseTemplate;
 		this.client = client;
-		this.users;
-		this.userTemplates;
-		this.personas = personas;
-		this.userRootFolders;
 	}
 
 	createUserTemplates(users) {
@@ -29,7 +25,7 @@ class TemplateEngine {
 
 	createPersonasList(users) {
 		let personas = [];
-		_.each(this.users, (user) => {
+		_.each(users, (user) => {
 			if (_.has(user, "persona")) {
 				personas.push(_.get(user, "persona"));
 			}
@@ -37,31 +33,19 @@ class TemplateEngine {
 		return _.uniq(personas);
 	}
 
-	getUsersRootFolders(users) {
-		let rootFolders = [];
-		_.each(this.users, (user) => {
-			if (_.has(user, "parentFolderId")) {
-				rootFolders.push(_.get(user, "parentFolderId"));
-			}
-		});
-		return _.uniq(rootFolders);
-	}
-
-	processUserTemplate(template) {
-		let processor = new TemplateProcessor(this.client, template, this.personas, this.users);
+	processUserTemplate(template, personas, users) {
+		let processor = new TemplateProcessor(this.client, template, personas, users);
 		return processor.processTemplate();
 	}
 
 	processUsersWithTemplate(users) {
-		this.users = users;
-		this.userTemplates = this.createUserTemplates(users);
-		this.personas = this.createPersonasList(users);
-		this.userRootFolders = this.getUsersRootFolders(users)
+		let userTemplates = this.createUserTemplates(users);
+		let personas = this.createPersonasList(users);
 		let self = this;
 		return asyncFunc(function* () {
 			let processing = [];
-			for (let i = 0; i < self.userTemplates.length; i++) {
-				processing.push(yield self.processUserTemplate(self.userTemplates[i]));
+			for (let i = 0; i < userTemplates.length; i++) {
+				processing.push(yield self.processUserTemplate(userTemplates[i], personas, users));
 			}
 			return yield Promise.all(processing)
 		})();

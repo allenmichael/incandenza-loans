@@ -18,6 +18,7 @@ module.exports.main = (req, res, next) => {
 }
 
 module.exports.callback = asyncFunc(function* (req, res, next) {
+	console.log(req.user);
 	let boxAppUserId = IdentityProviderUtilities.checkForExistingBoxAppUserId(req.user);
 	if (!boxAppUserId) {
 		let appUser = yield Box.createAppUser(req.user.displayName);

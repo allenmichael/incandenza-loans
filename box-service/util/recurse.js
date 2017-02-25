@@ -59,10 +59,13 @@ function findFolderFromFolderPath(obj, folderPath) {
 
 function recurseFoldersForFolderTree(client, id, options, folderTree, folders, callback) {
 	id = id || "0";
+	console.log(folders);
 	folders = folders || [];
 	var currentFolderPath = folderPathIndex[id];
 	var currentFolder = findFolderFromFolderPath(folderTree, currentFolderPath);
+	console.log("Paging through " + id);
 	autoPageWithOffset(client, "folders", "getItems", id, options, function (err, response) {
+		console.log(`Found: ${response}`);
 		response.forEach(function (item) {
 			if (item.type === "folder") {
 				var itemFolderPath = `${currentFolderPath}.${item.id}`;
@@ -78,6 +81,7 @@ function recurseFoldersForFolderTree(client, id, options, folderTree, folders, c
 			}
 		});
 		if (folders.length > 0) {
+			console.log("Recursing...");
 			recurseFoldersForFolderTree(client, folders.shift(), options, folderTree, folders, callback);
 		} else {
 			callback(null, folderTree);

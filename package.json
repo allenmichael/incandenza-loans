@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "prestart": "npm run test",
-    "dev-start": "./node_modules/.bin/gulp develop"
+    "dev-start": "./node_modules/.bin/gulp develop",
+    "start": "node ./bin/www"
   },
   "author": "AMSXBG",
   "license": "ISC",
