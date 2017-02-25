@@ -8,6 +8,7 @@ let indexCtrl = require('../controllers/indexController');
 let loginCtrl = require('../controllers/loginController');
 let usersCtrl = require('../controllers/usersController');
 let filesCtrl = require('../controllers/filesController');
+let titleAgentCtrl = require('../controllers/titleAgentController');
 
 router.get('/', indexCtrl.main);
 router.get('/login', loginCtrl.main);
@@ -21,8 +22,6 @@ router.get('/files/:id', ensureLoggedIn, filesCtrl.main);
 router.get('/files/:id/thumbnail', ensureLoggedIn, filesCtrl.thumbnail);
 router.get('/files/:id/preview', ensureLoggedIn, filesCtrl.preview);
 
-router.get('/employee-signup')
-
-router.get('/admin')
+router.get('/title-agent', ensureLoggedIn, loginCtrl.ensureTitleAgent, titleAgentCtrl.main);
 
 module.exports = router;

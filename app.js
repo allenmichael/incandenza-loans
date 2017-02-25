@@ -16,6 +16,7 @@ const strategy = require('./identity-service/passport-strategies/auth0-strategy'
 const Auth0Config = config.get('Auth0Config');
 
 let webapp = require('./app-web/routes/index');
+let apiLayer = require('./app-api/routes/index');
 
 let app = express();
 
@@ -41,6 +42,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', webapp);
+app.use('/api', apiLayer);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

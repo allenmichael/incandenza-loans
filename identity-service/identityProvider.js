@@ -4,6 +4,7 @@ const asyncFunc = Promise.coroutine;
 const config = require('config');
 const Auth0Config = config.get('Auth0Config');
 const BoxOptions = config.get('BoxOptions');
+const _ = require('lodash');
 let AuthenticationClient = require('auth0').AuthenticationClient;
 let ManagementClient = require('auth0').ManagementClient;
 let IdentityTokenCache = require('./identityTokenCache');

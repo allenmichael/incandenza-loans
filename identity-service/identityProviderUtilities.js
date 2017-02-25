@@ -5,9 +5,15 @@ const Auth0Config = config.get('Auth0Config');
 const Promise = require('bluebird');
 const asyncFunc = Promise.coroutine;
 const request = require('request');
+const _ = require('lodash');
 Promise.promisifyAll(request);
 
 class IdentityProviderUtilities {
+
+  static get authorizedRoles() {
+    return { titleAgent: "title-agent" };
+  }
+
   static normalizeAppMetadataOnProfile(profile) {
     let appMetadata = profile._json.app_metadata || {};
     profile.app_metadata = appMetadata;
@@ -16,6 +22,21 @@ class IdentityProviderUtilities {
 
   static checkForExistingBoxAppUserId(profile) {
     return (profile && profile.app_metadata && profile.app_metadata[BoxOptions.boxAppUserIdFieldName]) ? profile.app_metadata[BoxOptions.boxAppUserIdFieldName] : null;
+  }
+
+  static checkForRoleOnUser(role, profile) {
+    let exists = false;
+    if (profile && profile.app_metadata && profile.app_metadata.roles) {
+      let roles = profile.app_metadata.roles;
+      if (_.isArray(roles)) {
+        exists = (_.filter(roles, (eachRole) => {
+          return eachRole === role;
+        }).length > 0) ? true : false;
+      } else if (_.isString(roles)) {
+        exists = roles === role;
+      }
+    }
+    return exists;
   }
 
   static retrieveManagementToken() {
