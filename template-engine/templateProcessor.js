@@ -91,12 +91,18 @@ class TemplateProcessor {
 		return asyncFunc(function* () {
 			if (folderStructure.children && folderStructure.children.length > 0) {
 				yield self.processChildFolders(createdFolderId, folderStructure.children);
+			} else if (folderStructure.folders && folderStructure.folders.length > 0) {
+				yield self.processChildFolders(createdFolderId, folderStructure.folders);
 			}
 			if (self.checklist.length > 0) {
 				let buildNextFoldersPromise = [];
 				if (folderStructure.children && folderStructure.children.length > 0) {
 					for (let i = 0; i < folderStructure.children.length; i++) {
 						buildNextFoldersPromise.push(self.buildNextFolders(folderStructure.children[i], folderStructure.children[i].id));
+					}
+				} else if (folderStructure.folders && folderStructure.folders.length > 0) {
+					for (let i = 0; i < folderStructure.folders.length; i++) {
+						buildNextFoldersPromise.push(self.buildNextFolders(folderStructure.folders[i], folderStructure.folders[i].id));
 					}
 				}
 				yield Promise.all(buildNextFoldersPromise);

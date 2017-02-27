@@ -23,6 +23,14 @@ class IdentityProvider {
 		return this.authenticationClient.tokens.getInfo(idToken);
 	}
 
+	getExtendedIdentityFromUserId(id) {
+		let self = this;
+		return asyncFunc(function* () {
+			let manager = yield self.getUserManagementClient();
+			return yield manager.users.get({ id });
+		})();
+	}
+
 	getUserManagementClient() {
 		let self = this;
 		return asyncFunc(function* () {

@@ -8,6 +8,8 @@ const BoxCache = require('./boxTokenCache');
 const _ = require('lodash');
 const Promise = require('bluebird');
 const asyncFunc = Promise.coroutine;
+const BoxAutoPageUtilities = require('./util/autopageAsync');
+const BoxRecursiveUtilities = require('./util/recurseAsync');
 
 const BOX_ENTERPRISE = "enterprise";
 const BOX_USER = "user";
@@ -38,7 +40,7 @@ class BoxClientService {
 		return BoxUtilityServices.promisifyClient(this.BoxSdk.getAppAuthClient(BOX_ENTERPRISE, BoxSDKConfig.boxEnterpriseId));
 	}
 
-	getLongRunningUserClient(boxId) {
+	getLongRunningUserAccountClient(boxId) {
 		return BoxUtilityServices.promisifyClient(this.BoxSdk.getAppAuthClient(BOX_USER, boxId));
 	}
 
@@ -56,6 +58,46 @@ class BoxClientService {
 			let token = yield self.generateUserToken(boxId);
 			return BoxUtilityServices.promisifyClient(self.BoxSdk.getBasicClient(token.accessToken));
 		})();
+	}
+
+	autoPageWithOffsetUsingServiceAccount(manager, methodName, id, options) {
+		return BoxAutoPageUtilities.autoPageWithOffsetAsync(this.getLongRunningServiceAccountClient(), manager, methodName, id, options);
+	}
+
+	autoPageWithMarkerUsingServiceAccount(manager, methodName, id, options) {
+		return BoxAutoPageUtilities.autoPageWithMarkerAsync(this.getLongRunningServiceAccountClient(), manager, methodName, id, options);
+	}
+
+	autoPageWithStreamUsingServiceAccount(manager, methodName, id, options) {
+		return BoxAutoPageUtilities.autoPageWithMarkerAsync(this.getLongRunningServiceAccountClient(), manager, methodName, id, options);
+	}
+
+	autoPageWithOffsetUsingUserAccount(boxId, manager, methodName, id, options) {
+		return BoxAutoPageUtilities.autoPageWithOffsetAsync(this.getLongRunningUserAccountClient(boxId), manager, methodName, id, options);
+	}
+
+	autoPageWithMarkerUsingUserAccount(boxId, manager, methodName, id, options) {
+		return BoxAutoPageUtilities.autoPageWithMarkerAsync(this.getLongRunningUserAccountClient(boxId), manager, methodName, id, options);
+	}
+
+	autoPageWithStreamUsingUserAccount(boxId, manager, methodName, id, options) {
+		return BoxAutoPageUtilities.autoPageWithMarkerAsync(this.getLongRunningUserAccountClient(boxId), manager, methodName, id, options);
+	}
+
+	getAllItemsWithinFolderUsingServiceAccount(id) {
+		return BoxRecursiveUtilities.getAllItemsAsync(this.getLongRunningServiceAccountClient(), id);
+	}
+
+	getFullFolderTreeUsingServiceAccount(id) {
+		return BoxRecursiveUtilities.getFolderTreeAsync(this.getLongRunningServiceAccountClient(), id);
+	}
+
+	getAllItemsWithinFolderUsingUserAccount(boxId, id) {
+		return BoxRecursiveUtilities.getAllItemsAsync(this.getLongRunningUserAccountClient(boxId), id);
+	}
+
+	getFullFolderTreeUsingUserAccount(boxId, id) {
+		return BoxRecursiveUtilities.getFolderTreeAsync(this.getLongRunningUserAccountClient(boxId), id);
 	}
 
 	generateEnterpriseToken() {

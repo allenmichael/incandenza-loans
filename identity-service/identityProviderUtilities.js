@@ -11,7 +11,10 @@ Promise.promisifyAll(request);
 class IdentityProviderUtilities {
 
   static get authorizedRoles() {
-    return { titleAgent: "title-agent" };
+    return {
+      titleAgent: "title-agent",
+      admin: "admin"
+    };
   }
 
   static normalizeAppMetadataOnProfile(profile) {
@@ -37,6 +40,13 @@ class IdentityProviderUtilities {
       }
     }
     return exists;
+  }
+
+  static checkForUserId(token) {
+    if (token.sub) {
+      return token.sub;
+    }
+    return null;
   }
 
   static retrieveManagementToken() {

@@ -22,6 +22,10 @@ class Template {
 			_.each(folderTemplate.children, (child) => {
 				this._compileTemplate(child, templateKeys);
 			});
+		} else if (folderTemplate.folders && folderTemplate.folders.length > 0) {
+			_.each(folderTemplate.folders, (child) => {
+				this._compileTemplate(child, templateKeys);
+			});
 		}
 		return folderTemplate;
 	}

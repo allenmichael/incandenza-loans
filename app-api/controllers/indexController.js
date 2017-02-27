@@ -23,3 +23,17 @@ module.exports.token = asyncFunc(function* (req, res, next) {
 		res.json(e);
 	}
 });
+
+module.exports.ensureAdmin = asyncFunc(function* (req, res, next) {
+	let profile;
+	if (req.user && req.user.app_metadata) {
+		profile = req.user;
+	} else if (req.user && IdentityProviderUtilities.checkForUserId(req.user)) {
+		profile = yield IdentityProvider.getExtendedIdentityFromUserId(IdentityProviderUtilities.checkForUserId(req.user));
+	}
+	if (IdentityProviderUtilities.checkForRoleOnUser(IdentityProviderUtilities.authorizedRoles.admin, profile)) {
+		next();
+	} else {
+		res.status(401).json({ message: "You don't have the proper access for this function." });
+	}
+});
