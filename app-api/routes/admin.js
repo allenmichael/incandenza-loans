@@ -7,13 +7,20 @@ const BoxOptions = config.get('BoxOptions');
 const Auth0Config = config.get('Auth0Config');
 let indexCtrl = require('../controllers/indexController');
 let appCtrl = require('../controllers/appController');
-
-router.get('/', indexCtrl.main);
+let usersCtrl = require('../controllers/usersController');
 
 router.use(jwt({
   secret: Buffer.from(Auth0Config.clientSecret, 'base64'),
   audience: Auth0Config.clientId
 }));
-router.get('/token', indexCtrl.token);
+
+router.use(indexCtrl.ensureAdmin);
+
+router.get('/', indexCtrl.main);
+
+router.get('/users', usersCtrl.getUsers);
+
+router.get('/app/folder-structure', appCtrl.getFolderStructure);
+
 
 module.exports = router;

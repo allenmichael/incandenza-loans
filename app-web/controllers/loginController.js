@@ -19,9 +19,13 @@ module.exports.main = (req, res, next) => {
 
 module.exports.callback = asyncFunc(function* (req, res, next) {
 	console.log(req.user);
+	if (IdentityProviderUtilities.checkForRoleOnUser(IdentityProviderUtilities.authorizedRoles.admin, req.user)) {
+		res.redirect('/admin');
+		next();
+	}
 	if (IdentityProviderUtilities.checkForRoleOnUser(IdentityProviderUtilities.authorizedRoles.titleAgent, req.user)) {
 		res.redirect('/title-agent');
-		return;
+		next();
 	}
 	let boxAppUserId = IdentityProviderUtilities.checkForExistingBoxAppUserId(req.user);
 	if (!boxAppUserId) {
@@ -33,10 +37,30 @@ module.exports.callback = asyncFunc(function* (req, res, next) {
 	res.redirect('/user');
 });
 
-module.exports.ensureTitleAgent = (req, res, next) => {
-	if (IdentityProviderUtilities.checkForRoleOnUser(IdentityProviderUtilities.authorizedRoles.titleAgent, req.user)) {
+module.exports.ensureTitleAgent = asyncFunc(function* (req, res, next) {
+	let profile;
+	if (req.user && req.user.app_metadata) {
+		profile = req.user;
+	} else if (req.user && IdentityProviderUtilities.checkForUserId(req.user)) {
+		profile = yield IdentityProvider.getExtendedIdentityFromUserId(IdentityProviderUtilities.checkForUserId(req.user));
+	}
+	if (IdentityProviderUtilities.checkForRoleOnUser(IdentityProviderUtilities.authorizedRoles.titleAgent, profile)) {
 		next();
 	} else {
 		res.redirect('/');
 	}
-}
+});
+
+module.exports.ensureAdmin = asyncFunc(function* (req, res, next) {
+	let profile;
+	if (req.user && req.user.app_metadata) {
+		profile = req.user;
+	} else if (req.user && IdentityProviderUtilities.checkForUserId(req.user)) {
+		profile = yield IdentityProvider.getExtendedIdentityFromUserId(IdentityProviderUtilities.checkForUserId(req.user));
+	}
+	if (IdentityProviderUtilities.checkForRoleOnUser(IdentityProviderUtilities.authorizedRoles.admin, profile)) {
+		next();
+	} else {
+		res.redirect('/');
+	}
+});

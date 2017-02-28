@@ -17,6 +17,7 @@ const Auth0Config = config.get('Auth0Config');
 
 let webapp = require('./app-web/routes/index');
 let apiLayer = require('./app-api/routes/index');
+let adminApiLayer = require('./app-api/routes/admin');
 
 let app = express();
 
@@ -43,6 +44,7 @@ app.use(passport.session());
 
 app.use('/', webapp);
 app.use('/api', apiLayer);
+app.use('/api/admin', adminApiLayer);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

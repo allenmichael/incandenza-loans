@@ -31,6 +31,14 @@ class IdentityProvider {
 		})();
 	}
 
+	getUsers(page = 1, per_page = 50) {
+		let self = this;
+		return asyncFunc(function* () {
+			let userManagementClient = yield self.getUserManagementClient();
+			return yield userManagementClient.users.getAll({ page, per_page });
+		})();
+	}
+
 	getUserManagementClient() {
 		let self = this;
 		return asyncFunc(function* () {
