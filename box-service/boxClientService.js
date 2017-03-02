@@ -69,7 +69,7 @@ class BoxClientService {
 	}
 
 	autoPageWithStreamUsingServiceAccount(manager, methodName, id, options) {
-		return BoxAutoPageUtilities.autoPageWithMarkerAsync(this.getLongRunningServiceAccountClient(), manager, methodName, id, options);
+		return BoxAutoPageUtilities.autoPageWithStreamAsync(this.getLongRunningServiceAccountClient(), manager, methodName, id, options);
 	}
 
 	autoPageWithOffsetUsingUserAccount(boxId, manager, methodName, id, options) {
@@ -81,7 +81,7 @@ class BoxClientService {
 	}
 
 	autoPageWithStreamUsingUserAccount(boxId, manager, methodName, id, options) {
-		return BoxAutoPageUtilities.autoPageWithMarkerAsync(this.getLongRunningUserAccountClient(boxId), manager, methodName, id, options);
+		return BoxAutoPageUtilities.autoPageWithStreamAsync(this.getLongRunningUserAccountClient(boxId), manager, methodName, id, options);
 	}
 
 	getAllItemsWithinFolderUsingServiceAccount(id) {
