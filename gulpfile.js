@@ -4,7 +4,7 @@ const gulp = require('gulp'),
 	eslint = require('gulp-eslint');
 
 gulp.task('lint', () => {
-	return gulp.src(['**/*.js', '!node_modules/**'])
+	return gulp.src(['**/*.js', '!node_modules/**', '!admin-client-app/**'])
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError());

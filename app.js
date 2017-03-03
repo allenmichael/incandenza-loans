@@ -5,25 +5,25 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const session = require('express-session');
-const SessionCache = require('connect-redis')(session);
-const CacheService = require('./cache-service/cacheService');
+// const session = require('express-session');
+// const SessionCache = require('connect-redis')(session);
+// const CacheService = require('./cache-service/cacheService');
 const config = require('config');
 
-const passport = require('passport');
-const strategy = require('./identity-service/passport-strategies/auth0-strategy');
+// const passport = require('passport');
+// const strategy = require('./identity-service/passport-strategies/auth0-strategy');
 
-const Auth0Config = config.get('Auth0Config');
+// const Auth0Config = config.get('Auth0Config');
 
-let webapp = require('./app-web/routes/index');
+// let webapp = require('./app-web/routes/index');
 let apiLayer = require('./app-api/routes/index');
 let adminApiLayer = require('./app-api/routes/admin');
 
 let app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'app-web', 'views'));
-app.set('view engine', 'ejs');
+// app.set('views', path.join(__dirname, 'app-web', 'views'));
+// app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -31,20 +31,25 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'app-web', 'public')));
+app.use(express.static(path.join(__dirname, 'admin-client-app')));
+// app.use(express.static(path.join(__dirname, 'app-web', 'public')));
 
-app.use(session({
-	secret: Auth0Config.sessionSecret,
-	resave: true,
-	saveUninitialized: true,
-	store: new SessionCache({ client: new CacheService().getCacheClient() })
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(session({
+// 	secret: Auth0Config.sessionSecret,
+// 	resave: true,
+// 	saveUninitialized: true,
+// 	store: new SessionCache({ client: new CacheService().getCacheClient() })
+// }));
+// app.use(passport.initialize());
+// app.use(passport.session());
 
-app.use('/', webapp);
+// app.use('/', webapp);
 app.use('/api', apiLayer);
 app.use('/api/admin', adminApiLayer);
+
+app.get('*', (req, res) => {
+	res.sendFile(path.join(__dirname, 'admin-client-app/index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

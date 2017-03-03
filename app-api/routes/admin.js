@@ -19,6 +19,7 @@ router.use(indexCtrl.ensureAdmin);
 router.get('/', indexCtrl.main);
 
 router.get('/users', usersCtrl.getUsers);
+router.get('/users/:email', usersCtrl.getUserByEmail);
 
 router.get('/app/folder-structure', appCtrl.getFolderStructure);
 

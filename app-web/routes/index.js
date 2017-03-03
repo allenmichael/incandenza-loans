@@ -25,6 +25,6 @@ router.get('/files/:id/preview', ensureLoggedIn, filesCtrl.preview);
 
 router.get('/title-agent', ensureLoggedIn, loginCtrl.ensureTitleAgent, titleAgentCtrl.main);
 
-router.get('/admin', ensureLoggedIn, loginCtrl.ensureAdmin, adminCtrl.main);
+router.get('/admin', adminCtrl.main);
 
 module.exports = router;
