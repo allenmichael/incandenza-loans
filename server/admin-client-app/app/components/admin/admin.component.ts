@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Auth }      from '../../services/auth/auth.service';
+import { Auth } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'admin',
@@ -7,5 +7,5 @@ import { Auth }      from '../../services/auth/auth.service';
 })
 
 export class AdminComponent {
-  constructor(private auth: Auth) {}
+  constructor(private auth: Auth) { }
 };
