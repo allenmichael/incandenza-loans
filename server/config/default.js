@@ -12,7 +12,7 @@ module.exports = {
 		boxPrivateKey: (boxPrivateKeyFileName) => {
 			return fs.readFileSync(path.resolve(boxPrivateKeyFileName));
 		},
-		boxPublicKeyId: "",
+		boxPublicKeyId: ""
 	},
 	BoxOptions: {
 		inMemoryStoreSize: "100",
@@ -38,4 +38,4 @@ module.exports = {
 	AppConfig: {
 		domain: "http://localhost:3000"
 	}
-}
+};

@@ -24,5 +24,3 @@ module.exports.getUserByEmail = asyncFunc(function* (req, res, next) {
   console.log(users.length);
   res.send(users);
 });
-
-module.exports.verifyIdentity
