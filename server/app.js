@@ -1,7 +1,6 @@
 "use strict";
 const express = require('express');
 const path = require('path');
-const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -16,13 +15,13 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'admin-client-app')));
+app.use(express.static(path.join(__dirname, 'client-app/dist')));
 
 app.use('/api', apiLayer);
 app.use('/api/admin', adminApiLayer);
 
 app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname, 'admin-client-app/index.html'));
+	res.sendFile(path.join(__dirname, 'client-app/dist/index.html'));
 });
 
 // catch 404 and forward to error handler

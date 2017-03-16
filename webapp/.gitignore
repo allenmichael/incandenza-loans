@@ -3,6 +3,7 @@ examples/
 config.js
 private_key.pem
 config/local.js
+server/client-app/dist/
 
 # Logs
 logs
