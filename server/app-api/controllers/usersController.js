@@ -1,9 +1,9 @@
 'use strict';
 const Promise = require('bluebird');
 const asyncFunc = Promise.coroutine;
-let IdentityProvider = require('../../identity-service/identityProvider');
-let IdentityProviderUtilities = require('../../identity-service/identityProviderUtilities');
-let Box = require('../../box-service/boxClientService');
+let IdentityProvider = require('../../../shared-services/identity-service/identityProvider');
+let IdentityProviderUtilities = require('../../../shared-services/identity-service/identityProviderUtilities');
+let Box = require('../../../shared-services/box-service/boxClientService');
 
 module.exports.getUsers = asyncFunc(function* (req, res, next) {
   let page = req.query.page || 1;

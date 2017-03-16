@@ -38,12 +38,12 @@ class BoxTokenCache {
 		})();
 	}
 
-	setBoxToken(key, boxToken, expiration) {
+	setBoxToken(key, boxToken, expiration = 3600) {
 		let self = this;
 		return asyncFunc(function* () {
 			clearInMemoryStore(self.inMemoryStore);
 			self.inMemoryStore.set(key, boxToken);
-			expiration = expiration || 3600;
+			expiration = expiration;
 			boxToken = JSON.stringify(boxToken);
 			yield self.cache.setKeyWithExpiration(key, boxToken, expiration);
 			return true;

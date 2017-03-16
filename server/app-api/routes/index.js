@@ -15,6 +15,6 @@ router.use(jwt({
   audience: Auth0Config.clientId
 }));
 
-router.post('/box-token-exchange', indexCtrl.boxToken);
+router.post('/box-token-exchange', indexCtrl.token);
 
 module.exports = router;
