@@ -1,14 +1,9 @@
 .vscode
-admin-client-app/app/config/auth.config.js
-admin-client-app/app/config/auth.config.js.map
-admin-client-app/app/config/auth.config.ts
-admin-client-app/app/config/box.config.ts
-admin-client-app/app/config/box.config.js
-admin-client-app/app/config/box.config.js.map
 examples/
 config.js
 private_key.pem
 config/local.js
+app/dist/
 
 # Logs
 logs

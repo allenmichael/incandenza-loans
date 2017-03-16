@@ -7,7 +7,7 @@ let Box = require('../../../shared-services/box-service/boxClientService');
 
 module.exports.main = (req, res, next) => {
 	res.send({ title: "Box Reference App" });
-}
+};
 
 module.exports.token = asyncFunc(function* (req, res, next) {
 	try {

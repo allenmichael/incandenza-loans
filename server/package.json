@@ -6,8 +6,9 @@
   "private": true,
   "scripts": {
     "prestart": "npm run test",
-    "dev-start": "npm --prefix ../shared-services install && ./node_modules/.bin/gulp develop",
-    "start": "npm --prefix ../shared-services install && node ./bin/www"
+    "lint": "./node_modules/.bin/gulp lint",
+    "dev-start": "npm --prefix ../shared-services install && cd ./app && npm i && ng build --dev && cd .. && ./node_modules/.bin/gulp develop",
+    "start": "npm --prefix ../shared-services install && cd ./app && npm i && ng build --aot --prod && cd .. && node ./bin/www"
   },
   "author": "AMSXBG",
   "license": "ISC",
